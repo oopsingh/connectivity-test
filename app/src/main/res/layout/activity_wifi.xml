@@ -20,5 +20,13 @@
             android:id="@+id/button_wifi_toggle_activity"
             android:layout_gravity="center_horizontal"
             android:onClick="loadWifiToggleActivity" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="WiFi AP connect"
+            android:id="@+id/button_wifi_ap_connect"
+            android:layout_gravity="center_horizontal"
+            android:onClick="loadWifiConnectActivity" />
     </LinearLayout>
 </RelativeLayout>

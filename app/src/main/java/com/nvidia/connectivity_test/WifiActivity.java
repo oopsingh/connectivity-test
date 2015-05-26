@@ -43,4 +43,9 @@ public class WifiActivity extends ActionBarActivity {
         Intent intent = new Intent(this, WifiToggleActivity.class);
         startActivity(intent);
     }
+
+    public void loadWifiConnectActivity(View view) {
+        Intent intent = new Intent(this, WifiConnectActivity.class);
+        startActivity(intent);
+    }
 }

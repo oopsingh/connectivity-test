@@ -28,6 +28,10 @@
             android:name=".WifiToggleActivity"
             android:label="@string/title_activity_wifi_toggle" >
         </activity>
+        <activity
+            android:name=".WifiConnectActivity"
+            android:label="@string/title_activity_wifi_connect" >
+        </activity>
     </application>
 
 </manifest>
