@@ -33,11 +33,14 @@ public class WifiConnectActivity extends ActionBarActivity {
     WifiManager mWifiManager;
     HashMap<String, Integer> mIdMap = new HashMap<String, Integer>();
     private int mNetId;
+    private String mSSID;
     private long startTime = 0L;
     private long timeMs = 0L;
     private boolean connecting = false;
+    private boolean disconnecting = false;
     private StringBuilder builder = new StringBuilder();
     private BroadcastReceiver mWifiStateReceiver;
+    private String TAG = "Connectivity-Test";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +60,17 @@ public class WifiConnectActivity extends ActionBarActivity {
                 if (intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
                     NetworkInfo nInfo = (NetworkInfo) intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
                     WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
+
+                    //Same network selected. on disconnect start connection
+                    if (nInfo.getState() == NetworkInfo.State.DISCONNECTED && disconnecting) {
+                        disconnecting = false;
+                        mWifiManager.enableNetwork(mNetId, true);
+                        startTime = SystemClock.uptimeMillis();
+                        connecting = true;
+                        builder.append("Disconnected!. Connecting to: " + mSSID);
+                        textStatus.setText(builder.toString());
+                    }
+
                     if (mNetId == wifiInfo.getNetworkId() && connecting) {
                         if (nInfo.getDetailedState() == NetworkInfo.DetailedState.CONNECTED) {
                             timeMs = SystemClock.uptimeMillis() - startTime;
@@ -92,19 +106,23 @@ public class WifiConnectActivity extends ActionBarActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position,
                                     long id) {
                 String ssid = list.get(position);
-                int netId;
                 for (Map.Entry<String, Integer> entry : mIdMap.entrySet()) {
                     if (ssid.equals(entry.getKey())) {
                         mNetId = entry.getValue();
+                        mSSID = ssid;
                         if (mNetId == mWifiManager.getConnectionInfo().getNetworkId()) {
-                            textStatus.setText("Same network selected!");
+                            builder = new StringBuilder();
+                            builder.append("Same network selected! Diconnecting...\n");
+                            textStatus.setText(builder.toString());
+                            disconnecting = true;
+                            mWifiManager.disconnect();
                         } else {
                             mWifiManager.enableNetwork(mNetId, true);
+                            startTime = SystemClock.uptimeMillis();
+                            connecting = true;
                             builder = new StringBuilder();
                             builder.append("Network selected: " + ssid);
                             textStatus.setText(builder.toString());
-                            connecting = true;
-                            startTime = SystemClock.uptimeMillis();
                         }
                         break;
                     }
