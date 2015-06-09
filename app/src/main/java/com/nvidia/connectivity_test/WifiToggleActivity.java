@@ -23,6 +23,7 @@ import java.util.Objects;
 
 public class WifiToggleActivity extends ActionBarActivity {
 
+    String TAG = "Connectivity-test:WiFiToggle";
     private WifiManager mWifiManager;
     private BroadcastReceiver mReceiver;
 
@@ -105,6 +106,10 @@ public class WifiToggleActivity extends ActionBarActivity {
                             mSwitchBar.setEnabled(true);
                             wifiDisableTimer(false);
                             if (autoToggleCount > 0) {
+                                //For autoToggle test have 1 second default delay before enabling WiFi
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException e) { }
                                 toggleWiFi(true);
                                 autoToggleCount--;
                                 toggleNumber.setText(Objects.toString(autoToggleCount));
@@ -157,6 +162,15 @@ public class WifiToggleActivity extends ActionBarActivity {
                                                   }
                                               }
         );
+
+        //Pass extra parameter from command line to start auto toggle test
+        if (getIntent().getExtras()!= null) {
+            int cycles;
+            cycles = getIntent().getIntExtra("cycles", 1);
+            Log.i(TAG, "starting test for " + cycles + " cycles");
+            toggleNumber.setText(Objects.toString(cycles));
+            autoToggle.setChecked(true);
+        }
     }
 
     private void toggleWiFi(boolean status) {
