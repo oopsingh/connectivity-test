@@ -21,6 +21,38 @@
             android:text="Select Access Points from saved list to start AP connection"
             android:id="@+id/textView"
             android:layout_gravity="center_horizontal" />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Auto connect :"
+                    android:id="@+id/textView8" />
+
+                <ToggleButton
+                    android:layout_width="73dp"
+                    android:layout_height="38dp"
+                    android:text="New ToggleButton"
+                    android:onClick="autoConnect"
+                    android:id="@+id/toggleButton" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="cycles :   "
+                    android:id="@+id/textCycles" />
+
+                <EditText
+                    android:layout_width="85dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:ems="10"
+                    android:id="@+id/numCycle"
+                    android:text="5" />
+            </LinearLayout>
 
         <ListView
             android:layout_width="match_parent"
@@ -35,6 +67,7 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:id="@+id/text_connection_status"
             android:layout_gravity="center_horizontal" />
+
 
     </LinearLayout>
 </RelativeLayout>
