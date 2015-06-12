@@ -96,6 +96,9 @@ public class WifiToggleActivity extends ActionBarActivity {
                             wifiEnableTimer(false);
                             if (autoToggleCount > 0) {
                                 toggleWiFi(false);
+                            } else {
+                                toggleNumber.setText("5");
+                                autoToggle.setChecked(false);
                             }
                             break;
                         case WifiManager.WIFI_STATE_DISABLING:
@@ -106,13 +109,12 @@ public class WifiToggleActivity extends ActionBarActivity {
                             mSwitchBar.setEnabled(true);
                             wifiDisableTimer(false);
                             if (autoToggleCount > 0) {
-                                //For autoToggle test have 1 second default delay before enabling WiFi
-                                try {
-                                    Thread.sleep(1000);
-                                } catch (InterruptedException e) { }
                                 toggleWiFi(true);
                                 autoToggleCount--;
                                 toggleNumber.setText(Objects.toString(autoToggleCount));
+                            } else {
+                                toggleNumber.setText("5");
+                                autoToggle.setChecked(false);
                             }
                             break;
                         default:
@@ -174,13 +176,26 @@ public class WifiToggleActivity extends ActionBarActivity {
     }
 
     private void toggleWiFi(boolean status) {
-        if (status == true && !mWifiManager.isWifiEnabled()) {
-            wifiEnableTimer(true);
-            mWifiManager.setWifiEnabled(true);
-        } else if (status == false && mWifiManager.isWifiEnabled()) {
-            wifiDisableTimer(true);
-            mWifiManager.setWifiEnabled(false);
-        }
+        final boolean _status = status;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //For autoToggle test have 1 second default delay
+                if (autoToggleCount > 0) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                    }
+                }
+                if (_status == true && !mWifiManager.isWifiEnabled()) {
+                    wifiEnableTimer(true);
+                    mWifiManager.setWifiEnabled(true);
+                } else if (_status == false && mWifiManager.isWifiEnabled()) {
+                    wifiDisableTimer(true);
+                    mWifiManager.setWifiEnabled(false);
+                }
+            }
+        }).start();
     }
 
     private void wifiEnableTimer(boolean start) {
@@ -201,10 +216,11 @@ public class WifiToggleActivity extends ActionBarActivity {
                 onCurTime.setText(Objects.toString(enableCurTime));
                 onAvgTime.setText(Objects.toString(enableAvgTime));
                 onMaxTime.setText(Objects.toString(enableMaxTime));
+                Log.i(TAG, "WIFI ON Time (ScanAlwaysAvailable: " + mWifiManager.isScanAlwaysAvailable() +"): current: " + onCurTime.getText() + " average: " +
+                        onAvgTime.getText() + " max: " + onMaxTime.getText());
                 on_timer_started = false;
             }
         }
-
     }
 
     private void wifiDisableTimer(boolean start) {
@@ -225,6 +241,8 @@ public class WifiToggleActivity extends ActionBarActivity {
                 offCurTime.setText(Objects.toString(disableCurTime));
                 offAvgTime.setText(Objects.toString(disableAvgTime));
                 offMaxTime.setText(Objects.toString(disableMaxTime));
+                Log.i(TAG, "WIFI OFF Time (ScanAlwaysAvailable: " + mWifiManager.isScanAlwaysAvailable() + "): current: " + offCurTime.getText() + " average: " +
+                        offAvgTime.getText() + " max: " + offMaxTime.getText());;
                 off_timer_started = false;
             }
         }
